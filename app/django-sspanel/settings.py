@@ -12,11 +12,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import platform
-# 导入自定义设定文件
-if platform.node() == 'Ehco-iMac.lan':
-    from .simple_setting_local import *
-else:
-    from.simple_setting_product import *
+from .simple_setting import *
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

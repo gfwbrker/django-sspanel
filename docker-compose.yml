@@ -1,0 +1,34 @@
+version: '2'
+
+services:
+  mariadb:
+      image: mariadb
+      container_name: sspanel-mariadb
+      environment:
+        - MYSQL_ROOT_PASSWORD=sspanel
+        - MYSQL_DATABASE=sspanel
+      volumes:
+        - ./deployment/mysql_data:/var/lib/mysql:Z
+        - ./deployment/mysqld_charset.cnf:/etc/mysql/conf.d/mysqld_charset.cnf:Z
+
+  ss-panel:
+      build: .
+      ports:
+        - 8080:80
+      container_name: django-sspanel
+      depends_on:
+        - mariadb
+      environment:
+        - MIGRATION=true
+        - ADMIN_EMAIL=
+        - ADMIN_PASS=
+
+        - APP_LANG=en
+
+        - AUTH_SALT=
+        - AUTH_PASSWORD_ENCRYPTION_TYPE=bcrypt
+
+        - DB_HOST=mysql
+        - DB_DATABASE=sspanel
+        - DB_USERNAME=root
+        - DB_PASSWORD=sspanel

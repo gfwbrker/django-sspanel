@@ -1,3 +1,6 @@
+# Vim
+*.swp
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -52,6 +55,7 @@ coverage.xml
 
 # Django stuff:
 local_settings.py
+app/django-sspanel/simple_setting.py
 
 # Flask stuff:
 instance/
@@ -104,3 +108,9 @@ shadowsocks/Alipay_pub.pem
 shadowsocks/App_pravite.pem
 .vscode/launch.json
 .vscode/settings.json
+
+# logs
+logs/
+
+# mysql data
+mysql_data/

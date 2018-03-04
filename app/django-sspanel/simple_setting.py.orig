@@ -1,20 +1,20 @@
 # DEBUG设置
-DEBUG = False
+DEBUG = True
 
 # 域名设置
-ALLOWED_HOSTS = [
-    'your.domain.com'
-]
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = [
+#     'your.domain.com'
+# ]
 
 # mysql 设置
 DATABASES = {
-
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sspanel',
         'USER': 'root',
-        'PASSWORD': 'pass',
-        'HOST': '127.0.0.1',
+        'PASSWORD': 'sspanel',
+        'HOST': 'sspanel-mariadb',
         'PORT': '3306',
         'OPTIONS': {
             'autocommit': True,
@@ -37,7 +37,7 @@ EMAIL_HOST = 'smtp.163.com'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = 'USER'
 EMAIL_HOST_PASSWORD = 'PASS'
-DEFAULT_FROM_EMAIL = 'Ehco<ADDRESS>'
+DEFAULT_FROM_EMAIL = 'xx<ADDRESS>'
 
 # SS面板设置：
 MB = 1024 * 1024
@@ -55,7 +55,7 @@ MIN_CHECKIN_TRAFFIC = 10 * MB
 MAX_CHECKIN_TRAFFIC = 200 * MB
 
 # 是否启用支付宝系统
-USE_ALIPAY = True
+USE_ALIPAY = False 
 # 支付订单提示信息 修改请保留 {} 用于动态生成金额
 ALIPAY_TRADE_INFO = '谜之屋的{}元充值码'
 
@@ -63,9 +63,15 @@ ALIPAY_TRADE_INFO = '谜之屋的{}元充值码'
 # 91PAY 、ALIPAY只能开启一项
 # 需要授权请联系：
 # https://t.me/gh012363  或者QQ群538609570
-USE_91PAY = False
+<<<<<<< HEAD:django-sspanel/simple_setting_local.py
+USE_91PAY = True
 # 自己的支付宝账号
 ALIPAY_NUM='xx'
+=======
+USE_91PAY = False
+ID_91PAY='123'
+USER_91PAY='ehco'
+>>>>>>> Deploy using docker-compose:app/django-sspanel/simple_setting.py
 
 # 网站title
 TITLE = '谜之屋'
@@ -81,13 +87,3 @@ INVITEINFO = '邀请码实时更新，如果用完了进telegram群 群链接：
 
 # 网站域名设置（请正确填写，不然订阅功能会失效：
 HOST = 'https://www.ehcozone.ml/'
-
-
-import base64
-# 管理员账号
-USERNAME = 'ehco'
-# 管理员ss端口
-PORT = 1025
-# 管理员私有token，用于后端接口调用
-TOKEN = base64.b64encode(
-    bytes('{}+{}'.format(USERNAME, PORT), 'utf8')).decode()
