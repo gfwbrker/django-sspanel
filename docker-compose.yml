@@ -2,33 +2,43 @@ version: '2'
 
 services:
   mariadb:
-      image: mariadb
-      container_name: sspanel-mariadb
-      environment:
-        - MYSQL_ROOT_PASSWORD=sspanel
-        - MYSQL_DATABASE=sspanel
-      volumes:
-        - ./deployment/mysql_data:/var/lib/mysql:Z
-        - ./deployment/mysqld_charset.cnf:/etc/mysql/conf.d/mysqld_charset.cnf:Z
+    image: mariadb
+    networks:
+      - ss-manyuser
+    container_name: sspanel-mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=sspanel
+      - MYSQL_DATABASE=sspanel
+    volumes:
+      - ./deployment/mysql_data:/var/lib/mysql:Z
+      - ./deployment/mysqld_charset.cnf:/etc/mysql/conf.d/mysqld_charset.cnf:Z
 
   ss-panel:
-      build: .
-      ports:
-        - 8080:80
-      container_name: django-sspanel
-      depends_on:
-        - mariadb
-      environment:
-        - MIGRATION=true
-        - ADMIN_EMAIL=
-        - ADMIN_PASS=
+    build: .
+    networks:
+      - ss-manyuser
+    ports:
+      - 8080:80
+    container_name: django-sspanel
+    depends_on:
+      - mariadb
+    environment:
+      - MIGRATION=true
+      - ADMIN_EMAIL=
+      - ADMIN_PASS=
 
-        - APP_LANG=en
+      - APP_LANG=en
 
-        - AUTH_SALT=
-        - AUTH_PASSWORD_ENCRYPTION_TYPE=bcrypt
+      - AUTH_SALT=
+      - AUTH_PASSWORD_ENCRYPTION_TYPE=bcrypt
 
-        - DB_HOST=mysql
-        - DB_DATABASE=sspanel
-        - DB_USERNAME=root
-        - DB_PASSWORD=sspanel
+      - DB_HOST=mysql
+      - DB_DATABASE=sspanel
+      - DB_USERNAME=root
+      - DB_PASSWORD=sspanel
+    volumes:
+        - ./app/django-sspanel/simple_setting_sample.py:/home/docker/code/django-sspanel/simple_setting.py:Z
+
+networks:
+  ss-manyuser:
+    external: true

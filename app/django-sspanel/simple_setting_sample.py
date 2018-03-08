@@ -1,5 +1,5 @@
 # DEBUG设置
-DEBUG = False
+DEBUG = True
 
 # 域名设置
 ALLOWED_HOSTS = ['*']
@@ -83,7 +83,7 @@ import base64
 # 管理员账号
 USERNAME = 'sspanel'
 # 管理员ss端口
-PORT = 2345
+PORT = 10000
 # 管理员私有token，用于后端接口调用
 TOKEN = base64.b64encode(
     bytes('{}+{}'.format(USERNAME, PORT), 'utf8')).decode()

@@ -453,15 +453,20 @@ def node_api(request, node_id):
     return JsonResponse(re_dict)
 
 
-@require_http_methods(['POST', ])
 @csrf_exempt
+@require_http_methods(['POST', ])
 def node_online_api(request):
     '''
     接受节点在线人数上报
+    JSON DATA:
+    {
+        'node_id': ,
+        'online_user': ,
+    }
     '''
     token = request.GET.get('token', '')
     if token == settings.TOKEN:
-        data = json.loads(request.body)
+        data = json.loads(request.body.decode('utf-8'))
         node = Node.objects.filter(node_id=data['node_id'])
         if len(node) > 0:
             NodeOnlineLog.objects.create(
@@ -479,6 +484,25 @@ def node_online_api(request):
 def user_api(request, node_id):
     '''
     返回符合节点要求的用户信息
+    RET JSON:
+    {
+        'ret': 1,
+        'data': [
+            {
+                'port': ,
+                'u': ,
+                'd': ,
+                'transfer_enable': ,
+                'passwd': ,
+                'enable': ,
+                'id': ,
+                'method': ,
+                'obfs': ,
+                'protocol':
+            },
+            ...
+        ]
+    }
     '''
     token = request.GET.get('token', '')
     if token == settings.TOKEN:
@@ -514,27 +538,49 @@ def user_api(request, node_id):
 def traffic_api(request):
     '''
     接受服务端的用户流量上报
+    JSON_DATA:
+    {
+        'node_id': ,
+        'data': [
+            {
+                'user_id': ,
+                'u': ,
+                'd':
+            },
+            ...
+        ]
+    }
+    RES_DATA:
+    {
+        'user_id': 'ok',
+        ...
+    }
     '''
     token = request.GET.get('token', '')
     if token == settings.TOKEN:
-        traffic_rec_list = json.loads(request.body)['data']
-        node_id = json.loads(request.body)['node_id']
-        node = Node.objects.get(node_id=node_id)
+        data = json.loads(request.body.decode('utf-8'))
+        node = Node.objects.get(node_id=data['node_id'])
         traffic_pool = 0
-        for rec in traffic_rec_list:
+        res_data = dict()
+        for rec in data['data']:
             #  用户流量流量记录
-            user = SSUser.objects.get(pk=rec['user_id'])
-            user.upload_traffic += rec['u']
-            user.download_traffic += rec['d']
-            user.save()
-            traffic = traffic_format(rec['u'] + rec['d'])
-            TrafficLog.objects.create(
-                node_id=node_id, user_id=rec['user_id'], traffic=traffic, download_traffic=rec['d'], upload_traffic=rec['u'], log_time=round(time.time()))
-            traffic_pool = traffic_pool + int(rec['u'])+int(rec['d'])
+            try:
+                user = SSUser.objects.get(pk=rec['user_id'])
+                user.upload_traffic += rec['u']
+                user.download_traffic += rec['d']
+                user.save()
+                traffic = traffic_format(rec['u'] + rec['d'])
+                TrafficLog.objects.create(
+                    node_id=data['node_id'], user_id=rec['user_id'], traffic=traffic, download_traffic=rec['d'], upload_traffic=rec['u'], log_time=round(time.time()))
+                traffic_pool = traffic_pool + int(rec['u'])+int(rec['d'])
+                res_data[rec['user_id']] = 'ok'
+            except:
+                res_data[rec['user_id']] = 'fail'
+
         # 节点流量记录
         node.used_traffic = node.used_traffic + traffic_pool
         node.save()
-        re_dict = {'ret': 1, 'data': []}
+        re_dict = {'ret': 1, 'data': res_data}
     else:
         re_dict = {'ret': -1}
     return JsonResponse(re_dict)
@@ -543,6 +589,16 @@ def traffic_api(request):
 @csrf_exempt
 @require_http_methods(['POST', ])
 def alive_ip_api(request):
+    '''
+    JSON_DATA:
+    {
+        'node_id': ,
+        'data': {
+            "(user_id)": [iplist]),
+            ...
+        }
+    }
+    '''
     token = request.GET.get('token', '')
     if token == settings.TOKEN:
         data = json.loads(request.body)['data']

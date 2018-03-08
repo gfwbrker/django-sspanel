@@ -89,5 +89,4 @@ urlpatterns = [
          views.backend_ticketedit, name='backend_ticketedit'),
     # 在线ip
     path('backend/aliveuser/', views.backend_alive_user, name='alive_user'),
-    
 ]
