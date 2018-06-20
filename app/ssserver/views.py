@@ -238,7 +238,7 @@ def reset_node_traffic():
     for node in Node.objects.all():
         node.used_traffic = 0
         node.save()
-    print('all node traffic removed!:{}'.format(log))
+    print('all node traffic removed!')
 
 
 @permission_required('ssserver')
